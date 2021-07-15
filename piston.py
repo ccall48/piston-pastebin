@@ -8,10 +8,13 @@ EXECUTE = 'https://emkc.org/api/v2/piston/execute'
 RUNTIMES = 'https://emkc.org/api/v2/piston/runtimes'
 
 # python example: https://pastebin.com/raw/cmJ5Kaqw
-# javascript example: todo
-
+# javascript example: https://pastebin.com/raw/he0JvuYP
 
 async def runtimes():
+    """
+    Return a json list all current languages and versions available for those languages 
+    on the public piston instance 
+    """
     async with httpx.AsyncClient() as client:
         response = await client.get(RUNTIMES)
     return json.dumps(response.json(), indent=2)
