@@ -1,28 +1,27 @@
-#!/usr/bin/python3
 import sys
 import httpx
 import asyncio
 import json
 
-EXECUTE = 'https://emkc.org/api/v2/piston/execute'
 RUNTIMES = 'https://emkc.org/api/v2/piston/runtimes'
+EXECUTE = 'https://emkc.org/api/v2/piston/execute'
 
-# python example: https://pastebin.com/raw/cmJ5Kaqw
-# javascript example: https://pastebin.com/raw/he0JvuYP
 
 async def runtimes():
     """
     Return a json list all current languages and versions available for those languages 
-    on the public piston instance 
+    on the public piston instance (Also saves list to you machine).
     """
     async with httpx.AsyncClient() as client:
         response = await client.get(RUNTIMES)
-    return json.dumps(response.json(), indent=2)
+        with open('languages.json', 'w') as file:
+            file.write(response.text)
+    return json.dumps(response.json(), indent=4)
 
 
-async def execute(lang, code, *args):
+async def execute(lang, code_url, args):
     async with httpx.AsyncClient() as client:
-        execute = await client.get(code)
+        execute = await client.get(code_url)
 
         body = {
             "language": lang,
@@ -33,8 +32,8 @@ async def execute(lang, code, *args):
                     "content": execute.text
                     }
                 ],
-                "stdin": "",
-                "args": ["1", "2", "3"],
+                "stdin": str(args),
+                "args": list(args),
                 "compile_timeout": 10000,
                 "run_timeout": 3000,
                 "compile_memory_limit": -1,
@@ -42,9 +41,36 @@ async def execute(lang, code, *args):
         }
 
         response = await client.post(EXECUTE, json=body)
-    return json.dumps(response.json(), indent=2)
+    return json.dumps(response.json(), indent=4)
 
 
-print(asyncio.run(execute(sys.argv[1], sys.argv[2])))
-#print(asyncio.run(execute('py', TEST_CODE)))
-#print(asyncio.run(runtimes()))
+def runner():
+    if sys.argv[1] == 'runtimes':
+        return asyncio.run(runtimes())
+
+    if len(sys.argv) == 3:
+        print('NO INPUTS')
+        return asyncio.run(
+            execute(sys.argv[1], sys.argv[2], args='')
+        )
+
+    if len(sys.argv) > 4:
+        if sys.argv[3] == '-argv':
+            print('ARGV:', sys.argv[4:])
+            return asyncio.run(
+                execute(sys.argv[1], sys.argv[2], sys.argv[4:])
+            )
+
+        if sys.argv[3] == '-stdin':
+            print('STDIN:', ' '.join(sys.argv[4:]))
+            return asyncio.run(
+                execute(sys.argv[1], sys.argv[2], '\n'.join(sys.argv[4:]))
+            )
+
+
+print(runner())
+
+'''
+# ./piston.py runtimes - list of all availble languages and versions
+# ./piston.py <language> <raw url> <argv or stdin> multiple speerated by space
+'''

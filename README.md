@@ -8,24 +8,30 @@ If you find this useful, give us a star. Feel free to contribute, I created this
 a community type project! 
 
 # To get started
-`git clone https://github.com/ccall48/piston-pastebin.git`
+```git clone https://github.com/ccall48/piston-pastebin.git```
 cd `piston-pastebin`
 
 Create a virtual environment.
-`python3 -m venv .`
+```python3 -m venv .```
 
 Activate virtual environment.
-`source bin/activate`
+```source bin/activate```
 
 Install required ependencies.
-`pip install -U -r requirements.txt`
+```pip install -U -r requirements.txt```
+
+Make file executable.
+```chmod +x piston.py```
 
 # Usage.. (Still under development)
-chmod +x piston.py
+run file with no inputs
+```./piston.py <language> <script raw url>```
 
-./piston.py `language` `script URL`
+run file with arguments
+```./piston.py <language> <script raw url> -argv arg1 arg2 etc..```
 
-./piston.py py https://pastebin.com/raw/cmJ5Kaqw
+run a file with stdin
+```./piston.py <language> <script raw url> -stdin stdin1 stdin2 etc...```
 
 *** set a hash bang in script to location of your venv if you are using one. ***
 
