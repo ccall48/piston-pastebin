@@ -9,7 +9,7 @@ EXECUTE = 'https://emkc.org/api/v2/piston/execute'
 
 async def runtimes():
     """
-    Return a json list all current languages and versions available for those languages 
+    Return a json list all current languages and versions available for those languages
     on the public piston instance (Also saves list to you machine).
     """
     async with httpx.AsyncClient() as client:
@@ -32,13 +32,19 @@ async def execute(lang, code_url, args):
                     "content": execute.text
                     }
                 ],
-                "stdin": str(args),
-                "args": list(args),
+                #"stdin": str(args),
+                #"args": list(args),
                 "compile_timeout": 10000,
                 "run_timeout": 3000,
                 "compile_memory_limit": -1,
                 "run_memory_limit": -1
         }
+
+        if type(args) is str:
+            body['stdin'] = args
+
+        if type(args) is list:
+            body['args'] = args
 
         response = await client.post(EXECUTE, json=body)
     return json.dumps(response.json(), indent=4)
@@ -71,6 +77,13 @@ def runner():
 print(runner())
 
 '''
-# ./piston.py runtimes - list of all availble languages and versions
-# ./piston.py <language> <raw url> <argv or stdin> multiple speerated by space
+hello piston test
+# https://emkc.org/s/frMF7m/raw
+./piston.py py https://emkc.org/s/frMF7m/raw
+stdin test
+# https://emkc.org/s/e1doUA/raw
+./piston.py py https://emkc.org/s/e1doUA/raw -stdin cat
+argument test
+# https://emkc.org/s/AY7F9N/raw
+./piston.py py https://emkc.org/s/AY7F9N/raw -argv cat dog
 '''
