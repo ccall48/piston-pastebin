@@ -28,12 +28,9 @@ async def execute(lang, code_url, args):
                 "version": "*",
                 "files": [
                     {
-                    #"name": "main.py",
                     "content": execute.text
                     }
                 ],
-                #"stdin": str(args),
-                #"args": list(args),
                 "compile_timeout": 10000,
                 "run_timeout": 3000,
                 "compile_memory_limit": -1,
@@ -73,17 +70,4 @@ def runner():
                 execute(sys.argv[1], sys.argv[2], '\n'.join(sys.argv[4:]))
             )
 
-
 print(runner())
-
-'''
-hello piston test
-# https://emkc.org/s/frMF7m/raw
-./piston.py py https://emkc.org/s/frMF7m/raw
-stdin test
-# https://emkc.org/s/e1doUA/raw
-./piston.py py https://emkc.org/s/e1doUA/raw -stdin cat
-argument test
-# https://emkc.org/s/AY7F9N/raw
-./piston.py py https://emkc.org/s/AY7F9N/raw -argv cat dog
-'''
