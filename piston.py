@@ -15,7 +15,7 @@ async def runtimes():
     async with httpx.AsyncClient() as client:
         response = await client.get(RUNTIMES)
         with open('languages.json', 'w') as file:
-            file.write(response.text)
+            file.write(json.dumps(response.json(), indent=4))
     return json.dumps(response.json(), indent=4)
 
 
